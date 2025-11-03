@@ -44,9 +44,6 @@ ENV SLEEPLESS_WORKSPACE_ROOT=/app/workspace
 ENV SLEEPLESS_DB_PATH=/app/workspace/data/tasks.db
 ENV SLEEPLESS_RESULTS_PATH=/app/workspace/data/results
 
-# Volume for persistent data
-VOLUME ["/app/workspace"]
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; from pathlib import Path; sys.exit(0 if Path('/app/workspace/data/tasks.db').exists() else 1)"

@@ -385,6 +385,27 @@ The agent intelligently processes different task types:
 
 ## 🚢 Deployment
 
+### Docker / Railway (Recommended for Cloud)
+
+Deploy as a containerized service on Railway or any Docker-compatible platform:
+
+```bash
+# Quick deploy with Docker Compose
+docker-compose up -d
+
+# Or deploy to Railway
+# See detailed guide: RAILWAY_DEPLOYMENT.md
+```
+
+For complete Railway deployment instructions, see [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)
+
+**What's included:**
+- ✅ Pre-built Dockerfile with Claude Code CLI
+- ✅ Railway configuration files (railway.json, railway.toml)
+- ✅ Docker Compose for local testing
+- ✅ Persistent volume support for workspace data
+- ✅ Health checks and automatic restart policies
+
 ### Linux (systemd)
 ```bash
 make install-service
