@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  sleepless-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sleepless-agent
+    restart: unless-stopped
+
+    environment:
+      # Slack Configuration (Required)
+      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
+      SLACK_APP_TOKEN: ${SLACK_APP_TOKEN}
+
+      # Git Configuration (Optional)
+      GIT_USER_NAME: ${GIT_USER_NAME:-Sleepless Agent}
+      GIT_USER_EMAIL: ${GIT_USER_EMAIL:-agent@sleepless.local}
+
+      # Agent Configuration (Optional - defaults set in Dockerfile)
+      # SLEEPLESS_AGENT__AGENT__WORKSPACE_ROOT: /app/workspace
+      # SLEEPLESS_AGENT__AGENT__DB_PATH: /app/workspace/data/tasks.db
+      # SLEEPLESS_AGENT__AGENT__RESULTS_PATH: /app/workspace/data/results
+
+      # Claude Code Configuration (Optional)
+      # SLEEPLESS_AGENT__CLAUDE_CODE__MODEL: claude-sonnet-4-5-20250929
+      # SLEEPLESS_AGENT__CLAUDE_CODE__THRESHOLD_DAY: 20.0
+      # SLEEPLESS_AGENT__CLAUDE_CODE__THRESHOLD_NIGHT: 80.0
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+    volumes:
+      # Persistent workspace storage
+      - sleepless_workspace:/app/workspace
+
+      # Optional: Mount custom config.yaml
+      # - ./config.yaml:/app/src/sleepless_agent/config.yaml:ro
+
+      # Optional: Mount SSH keys for git operations
+      # - ~/.ssh:/root/.ssh:ro
+
+    # Optional: Expose ports for monitoring/debugging
+    # ports:
+    #   - "8080:8080"
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; from pathlib import Path; sys.exit(0 if Path('/app/workspace/data/tasks.db').exists() else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  sleepless_workspace:
+    driver: local
